@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.2.3/foundation.min.css">
+  </head>
+  <body>
+   
+    <div id="app"></div>
+
+    <script id="post-template" type="text/template">
+      <div class="row">
+        <div class="column">
+          <div class="callout">
+            <div class="row">
+              <div class="columns small-2">
+                <img class="js-post-user-image" />
+              </div>
+              <div class="columns small-10">
+                <div><strong class="post-username js-post-username"></strong></div>
+                <div class="post-body js-post-body"></div>
+                <hr />
+                <div class="post-comments js-post-comments"></div>
+                <br />
+                <button class="button hollow js-post-add-button">Add a Comment</button>
+                <div class="js-post-comment-form"></div>
+              <div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script id="sign-in-template" type="text/template">
+      <div class="row">
+        <div class="column">
+          <h1>You need Sign In</h1>
+          <button class="button js-sign-in-button">Sign In by Github</button>
+        </div>
+      </div>
+    </script>
+
+    <script id="profile-template" type="text/template">
+      <div class="row">
+        <div class="column">
+          <div class="callout">
+            <form class="profile-form js-profile-form">
+              <div class="row">
+                <div class="columns small-2">
+                  <img class="js-profile-image" />
+                </div>
+                <div class="columns small-10">
+                  <h2 class="js-profile-title"></h2>
+                  <div>
+                    <input class="js-profile-username" type="text" placeholder="Your Username" />
+                  </div>
+                  <input class="button" type="submit" value="Update Profile" />
+                  <input class="button hollow js-profile-sign-out-button" type="button" value="Sign Out" />
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script id="comment-template" type="text/template">
+      <div class="row">
+        <div class="columns small-1">
+          <img class="js-comment-user-image" />
+        </div>
+        <div class="columns small-11">
+          <div>
+            <strong class="comment-user js-comment-user"></strong>
+          </div>
+          <div class="comment-body js-comment-body"></div>
+        </div>
+      </div>
+    </script>
+
+    <script id="comment-form-template" type="text/template">
+      <form class="comment-form js-comment-form">
+        <div>
+          <textarea class="comment-textarea js-comment-body" placeholder="Your comment..."></textarea>
+        </div>
+        <input class="button" type="submit" value="Add a Comment" />
+      </form>
+    </script>
+
+    <script id="post-form-template" type="text/template">
+      <div class="row">
+        <div class="column">
+          <form class="callout primary post-form js-post-form">
+            <div>
+              <textarea class="post-textarea js-post-form-body" placeholder="Enter text of Post..."></textarea>
+            </div>
+            <input class="button" type="submit" value="Add a Post" />
+          </form>
+        </div>
+      </div>
+    </script>
+
+    <script src="/horizon/horizon.js"></script>
+    <script src="/app.js"></script>
+    <script>
+      function getTemplate (id) {
+        return document.getElementById(id+'-template').innerHTML;
+      }
+
+      // start app
+      initApp({
+        rootEl:               document.getElementById('app'),
+        postTemplate:         getTemplate('post'),
+        postFormTemplate:     getTemplate('post-form'),
+        commentTemplate:      getTemplate('comment'),
+        commentFormTemplate:  getTemplate('comment-form'),
+        signInTemplate:       getTemplate('sign-in'),
+        profileTemplate:      getTemplate('profile'),
+        defaultUsername:      'Anonymouse',
+        defaultUserImage:     '/ghost.jpg',
+        avatarUrl:            'https://robohash.org/'
+      });
+    </script>
+  </body>
+</html>

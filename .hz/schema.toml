@@ -1,0 +1,26 @@
+# This is a TOML document
+
+[collections.users]
+
+[collections.posts]
+[[collections.posts.indexes]]
+fields = [["updateAt"]]
+
+[groups.admin]
+[groups.admin.rules.carte_blanche]
+template = "any()"
+
+[groups.unauthenticated.rules.read_profile]
+template = "collection('users').anyRead()"
+
+[groups.authenticated.rules.read]
+template = "collection('posts').anyRead()"
+
+[groups.authenticated.rules.read_profile]
+template = "collection('users').anyRead()"
+
+[groups.authenticated.rules.upsert_profile]
+template = "collection('users').upsert({id: userId(), username: any()})"
+
+[groups.authenticated.rules.upsert_posts]
+template = "collection('posts').upsert({userId: userId(), body: any(), updateAt: any(), username: any()})"
