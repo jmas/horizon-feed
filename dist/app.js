@@ -13,8 +13,12 @@ function initApp (config) {
     });
   }
 
-  function createEl () {
-    return document.createElement('DIV');
+  function createEl (html) {
+    let el = document.createElement('DIV');
+    if (html) {
+      diffhtml.innerHTML(el, html);
+    }
+    return el;
   }
 
   function createAppEl (data) {
@@ -26,8 +30,7 @@ function initApp (config) {
   }
   
   function createProfileEl (user) {
-    var el = createEl();
-    el.innerHTML = config.profileTemplate;
+    var el = createEl(config.profileTemplate);
     el.querySelector('.js-profile-image').src = config.avatarUrl+user.id+'?'+Math.random();
     el.querySelector('.js-profile-title').innerHTML = 'Profile of '+(user.username || config.defaultUsername);
     el.querySelector('.js-profile-username').value = user.username || config.defaultUsername;
@@ -40,14 +43,12 @@ function initApp (config) {
       event.preventDefault();
       var usernameEl = el.querySelector('.js-profile-username');
       upsertUser(user, usernameEl.value);
-      usernameEl.value = '';
     };
     return el;
   }
   
   function createSignInEl () {
-    var el = createEl();
-    el.innerHTML = config.signInTemplate;
+    var el = createEl(config.signInTemplate);
     el.querySelector('.js-sign-in-button').onclick = function (event) {
       event.preventDefault();
       horizon.authEndpoint('github').subscribe((endpoint) => {
@@ -58,8 +59,7 @@ function initApp (config) {
   }
   
   function createPostFormEl (user) {
-    var el = createEl();
-    el.innerHTML = config.postFormTemplate;
+    var el = createEl(config.postFormTemplate);
     el.querySelector('.js-post-form').onsubmit = function (event) {
       event.preventDefault();
       var bodyEl = el.querySelector('.js-post-form-body');
@@ -74,15 +74,14 @@ function initApp (config) {
   }
   
   function createPostEl (post, user) {
-    var el = createEl();
-    el.innerHTML = config.postTemplate;
+    var el = createEl(config.postTemplate);
     el.querySelector('.js-post-username').innerHTML = post.username || config.defaultUsername;
     el.querySelector('.js-post-body').innerHTML = escapeHtml(post.body);
     el.querySelector('.js-post-user-image').src = post.userId ? config.avatarUrl+post.userId: config.defaultUserImage;
     el.querySelector('.js-post-add-button').onclick = function (event) {
       event.preventDefault();
       var formPlaceholderEl = el.querySelector('.js-post-comment-form');
-      formPlaceholderEl.innerHTML = '';
+      formPlaceholderEl.innerHTML = post.id;
       formPlaceholderEl.appendChild(createCommentFormEl(post, user));
     };
     if (post.comments) {
@@ -95,8 +94,7 @@ function initApp (config) {
   }
   
   function createCommentFormEl (post, user) {
-    var el = createEl();
-    el.innerHTML = config.commentFormTemplate;
+    var el = createEl(config.commentFormTemplate);
     el.querySelector('.js-comment-form').onsubmit = function (event) {
       event.preventDefault();
       var bodyEl = el.querySelector('.js-comment-body');
@@ -111,8 +109,7 @@ function initApp (config) {
   }
   
   function createCommentEl (comment) {
-    var el = createEl();
-    el.innerHTML = config.commentTemplate;
+    var el = createEl(config.commentTemplate);
     el.querySelector('.js-comment-user').innerHTML = comment.username || config.defaultUsername;
     el.querySelector('.js-comment-body').innerHTML = escapeHtml(comment.body);
     el.querySelector('.js-comment-user-image').src = comment.userId ? config.avatarUrl+comment.userId: config.defaultUserImage;
@@ -149,16 +146,14 @@ function initApp (config) {
   horizon.onReady(function () {
     // Currently we are not Signed In
     if (!horizon.hasAuthToken()) {
-      config.rootEl.appendChild(createSignInEl());
+      diffhtml.element(config.rootEl, createSignInEl());
     } else { // We are Signed In 
       // Aggregate several queries
       horizon.aggregate({
         user: horizon.currentUser(),
         feed: horizon('posts').order('updateAt', 'descending').limit(100)
       }).watch().subscribe(function (data) {
-        console.log(data);
-        config.rootEl.innerHTML = '';
-        config.rootEl.appendChild(createAppEl(data));
+        diffhtml.element(config.rootEl, createAppEl(data));
       });
     }
   });
